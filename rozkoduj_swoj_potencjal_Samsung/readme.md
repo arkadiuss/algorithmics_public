@@ -1,0 +1,1 @@
+http://rozkodujswojpotencjal.pl/
