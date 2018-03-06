@@ -1,0 +1,19 @@
+tips:
+-always take care of long long and proper type
+-dijkstra is always good idea when you can make good graph to use it
+-sometimes it is really good idea to try Monte Carllo algorithms
+-remember about O(sqrt(n)) - you an divide it to sqrt(n) problems and count something in two ways - for small and big
+-if some input is small try to use bits
+-sorting point by angle is often used
+-sometimes you can clean sth up using broom
+-input and output times of verticle in tree
+-there is a lot of operations that you can do on binary tree (e.g. jump)
+-always test your solutions, write brute and test it
+-sometimes you can look at problem like a graph(cartezian)
+-remember about binary searching of answer
+-some solutions are t 
+
+
+to learn:
+-bridges and articulation points
+-dynamics

@@ -1,0 +1,14 @@
+Some ideas:
+-Convex Hull Trick - for example for finding group of biznesmens, which contain the reachest men, according to rate.
+-Fermat's little theorem.
+-Modular multiplicative inverse.
+-nimbers and xors to game theory (Sprague-Grundy theorem) - nimber of state is a mex of states, which you can achieve.
+-probability algorithms
+-xor
+
+Algorithms:
+-DFS tree
+-searching of brigdes(cut vertices), articulation points, biconnected componets, grapf to tree of biconnected componets
+-PREF table
+-find and union
+-
