@@ -1,7 +1,8 @@
+#include<algorithm>
 #include<vector>
 #include<iostream>
 #include<cmath>
-#include<algorithm>
+#include<ctime>
 #define VAR(i,n) __typeof(n) i = (n)
 #define loop(i,j,s) for(int i=j;i<s;i++)
 #define loopback(i,j,s) for(int i=j;i>=s;i--)
@@ -40,109 +41,135 @@ struct ride {
 struct car{
 	int x,y;
 	int endtime;
-	vector<int> getted;
+	vector<ride> getted;
 };
 int R,C,F,N,B,T;
 ride rides[MAX];
+ll dist(int a, int b,int c ,int d){
+	return abs(d-b)+abs(c-a);
+}
 bool sortByS(ride a, ride b){
-	return a.s<b.s;
+	//return dist(a.a,a.b,a.x,a.y)>dist(b.a,b.b,b.x,b.y);
+	return a.f<b.f;
 }
 void coutRides(){
 	loop(i,0,N){
 		cout<<rides[i].a<<" "<<rides[i].b<<" "<<rides[i].x<<" "<<rides[i].y<<" "<<rides[i].s<<" "<<rides[i].f<<"\n";
 	}
 }
-ll dist(int a, int b,int c ,int d){
-	return abs(d-b)+abs(c-a);
-}
+
 bool was[MAX];
+int countEndTime(vector<ride> & rides){
+	int endtime=0;
+	int x=0,y=0;
+	loop(i,0,rides.size()){
+		int d=dist(x,y,rides[i].a,rides[i].b);
+		int dR=dist(rides[i].a,rides[i].b,rides[i].x,rides[i].y);
+		if(endtime+d>rides[i].s) return INFTY;
+		endtime=max(endtime+d,rides[i].s)+dR;
+		x=rides[i].x;
+		y=rides[i].y;
+	}
+	return endtime;
+}
+int bestPos(vector<ride> rides, ride a){
+	if(rides.empty()) return 0;
+	else{
+		rides.pb(a);
+		int bi=rides.size()-1;
+		int be=countEndTime(rides);
+		loopback(i,rides.size()-2,0){
+			swap(rides[i],rides[i+1]);
+			int en=countEndTime(rides);
+			if(be>en){
+				be=en;
+				bi=i;
+			}
+		}
+		if(be==INFTY) return -1;
+		return bi;
+	}
+}
+void swapLastToPos(vector<ride> & rides,int i){
+	if(rides.size()==1&&i==0) return;
+	int j=rides.size()-2;
+	while(j>=i){
+		swap(rides[j],rides[j+1]);
+		j--;
+	}
+	//swap(rides[j],rides[j+1]);	
+}
 int main(){
-	ios_base::sync_with_stdio(0);
+	//ios_base::sync_with_stdio(0);
 	cin>>R>>C>>F>>N>>B>>T;
 	loop(i,0,N){
 		cin>>rides[i].a>>rides[i].b>>rides[i].x>>rides[i].y>>rides[i].s>>rides[i].f;
 		rides[i].ind=i;
 	}
 	sort(rides,rides+N,sortByS);
+	//srand(time(0));
+	//random_shuffle(rides,rides+N);
 	//coutRides();
 	int avoidTresh=3000;
 	ll sum=0;
 	car cars[1000];
-	loop(i,0,F){
+	loop(i,0,F){	
 		cars[i].x=0;
 		cars[i].y=0;
 		cars[i].endtime=0;
 	}
 	int j=0;
-	int notget=0;
-	loop(t,0,T){
-		//pln(t);
-		while(j<N&&rides[j].s<=t){
-			int iBS=-1;
+	int S=0;
+	int z=2;//pln("START");
+	while(z--){
+		loop(j,0,N){
+			if(!(rand()%3)) continue;
+			int bcar=-1;
+			int bend=INFTY;
+			int bpos=-1;
+			int dR=dist(rides[j].x,rides[j].y,rides[j].a,rides[j].b);
+			//ps("j");pln(j);
+			cerr<<j<<"\n";
 			loop(i,0,F){
-				if(avoidTresh<dist(cars[i].x,cars[i].y,rides[j].a,rides[j].b)) continue;
-				int d=dist(cars[i].x,cars[i].y,rides[j].a,rides[j].b);
-				int dR=dist(rides[j].x,rides[j].y,rides[j].a,rides[j].b);
-				if(cars[i].endtime+d<rides[j].s&&cars[i].endtime+d+dR<=T){
-					if(iBS==-1){ iBS=i;}
-					else{
-						if(d>dist(cars[iBS].x,cars[iBS].y,rides[j].a,rides[j].b)){
-							iBS=i;
+				if(!was[rides[j].ind]){
+					//int d=dist(cars[i].x,cars[i].y,rides[j].a,rides[j].b);
+					int bi=bestPos(cars[i].getted,rides[j]);
+					//if(i==1) pln(bi);
+					if(bi!=-1){
+						vector<ride> rs;
+						rs=cars[i].getted;
+						rs.pb(rides[j]);
+						int e=countEndTime(rs);
+					
+						if(e<bend){
+							bend=e;
+							bcar=i;
+							bpos=bi;
 						}
 					}
 				}
 			}
-			if(iBS!=-1){
-				if(max(cars[iBS].endtime+dist(cars[iBS].x,cars[iBS].y,rides[j].a,rides[j].b),rides[j].s+
-					dist(rides[j].a,rides[j].b,rides[j].x,rides[j].y))<rides[j].f)
-					sum+=dist(rides[j].a,rides[j].b,rides[j].x,rides[j].y)+B;
-				cars[iBS].endtime=rides[j].s+dist(rides[j].a,rides[j].b,rides[j].x,rides[j].y);
-				rides[j].end=rides[j].s+dist(rides[j].a,rides[j].b,rides[j].x,rides[j].y);
-				cars[iBS].x=rides[j].x;
-				cars[iBS].x=rides[j].y;
-				
-				cars[iBS].getted.pb(j);
-				was[j]=1;
-			}else{
-				notget++;
+			//ps("I have best");pln(bcar);
+			if(bcar!=-1){
+				cars[bcar].getted.pb(rides[j]);
+				swapLastToPos(cars[bcar].getted,bpos);
+				cars[bcar].endtime=countEndTime(cars[bcar].getted);
+				S+=dR+B;
+				was[rides[j].ind]=1;
 			}
-			j++;
 		}
 	}
-	loop(j,0,N){
-		if(!was[j]){
-			int iBS=-1;
-			loop(i,0,F){
-				int d=dist(cars[i].x,cars[i].y,rides[j].a,rides[j].b);
-				if(max(cars[i].endtime+d,rides[j].s)+dist(rides[j].a,rides[j].b,rides[j].x,rides[j].y)<=rides[j].f){
-					if(iBS==-1){ iBS=i;}
-				
-					else{
-						if(cars[i].endtime>cars[iBS].endtime){
-							iBS=i;
-						}
-					}
-				}
-			}
-			if(iBS!=-1){
-				cars[iBS].endtime=rides[j].s+dist(rides[j].a,rides[j].b,rides[j].x,rides[j].y);
-				cars[iBS].x=rides[j].x;
-				cars[iBS].x=rides[j].y;
-				sum+=dist(rides[j].a,rides[j].b,rides[j].x,rides[j].y);
-				cars[iBS].getted.pb(j);
-				was[j]=1;
-				notget--;
-			}
-		}
+	ll notget;
+	loop(i,0,N){
+		if(!was[i]) notget++;
 	}
 	loop(i,0,F){
 		ps(cars[i].getted.size());
 		loop(j,0,cars[i].getted.size()){
-			cout<<rides[cars[i].getted[j]].ind<<" ";
-			//cout<<rides[cars[i].getted[j]].end<<":"<<rides[cars[i].getted[j]].x<<":"<<rides[cars[i].getted[j]].y<<":"<<rides[cars[i].getted[j+1]].a<<":"<<rides[cars[i].getted[j+1]].b<<":"<<dist(rides[cars[i].getted[j]].x,rides[cars[i].getted[j]].y,rides[cars[i].getted[j+1]].a,rides[cars[i].getted[j+1]].b)<<":"<<rides[cars[i].getted[j+1]].s<<"\n";
+			cout<<cars[i].getted[j].ind<<" ";
 		}
 		entr;
 	}
-	//pln(sum);
+	pln(S);
 	//pln(notget);
 }
