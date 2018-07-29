@@ -5,7 +5,7 @@
 #define foreach(i,c) for(VAR(i,(c).begin());i!=(c).end();i++)
 #define pln( x ) cout << x << "\n"
 #define ps( x ) cout << x << " "
-#define entr cout << "\n" 
+#define entr cout << "\n"
 #define pcnt(i) __builtin_popcount(i)
 #define ll long long
 #define pb push_back
@@ -17,7 +17,7 @@
 using namespace std;
 typedef vector<int> VI;
 const int INFTY=20000000;
-const int MAX=500100;
+const int MAX=101;
 const int MOD=10000000;
 
 void coutTab(int* tab,int n){
@@ -29,13 +29,15 @@ void coutTab(int* tab,int n){
 //------------------------------------------
 int main(){
 	ios_base::sync_with_stdio(0);
-	int a,b;
-	cin>>a>>b;
+	int n;
+	int a[MAX];
+	int b[MAX];
+	//not the same
+	cin>>n;
+	loop(i,0,n) cin>>a[i];
+	loop(i,0,101) b[i]=0;
+	loop(i,0,n) b[a[i]]++;
 	int m=0;
-	while(a<=b){
-		a*=3;
-		b*=2;
-		m++;
-	}
+	loop(i,0,101) m=max(m,b[i]);
 	pln(m);
 }

@@ -5,7 +5,7 @@
 #define foreach(i,c) for(VAR(i,(c).begin());i!=(c).end();i++)
 #define pln( x ) cout << x << "\n"
 #define ps( x ) cout << x << " "
-#define entr cout << "\n" 
+#define entr cout << "\n"
 #define pcnt(i) __builtin_popcount(i)
 #define ll long long
 #define pb push_back
@@ -17,7 +17,7 @@
 using namespace std;
 typedef vector<int> VI;
 const int INFTY=20000000;
-const int MAX=500100;
+const int MAX=1100;
 const int MOD=10000000;
 
 void coutTab(int* tab,int n){
@@ -27,10 +27,47 @@ void coutTab(int* tab,int n){
 	cout<<"\n";
 }
 //------------------------------------------
+int a[MAX],b[MAX];
+int n,m;
+bool check(double f){
+	double mass = m + f;
+	loop(i,0,n){
+		double u = mass/a[i];
+		f -= u;
+		mass -= u;
+		if(f<0) return false;
+		if(i==n-1){
+			u=mass/b[0];
+		}else{
+			u=mass/b[i+1];
+		}
+		f-=u;
+		mass -=u;
+		if(f<0) return false;
+		//ps(f);
+	}
+	return true;
+}
+double findRes(){
+	double s=0,e=1000000000;
+	while(abs(s-e)>1e-6){
+		double m = (s+e)/2.0;
+		//ps(m);pln(check(m));
+		if(check(m)){
+			e=m;
+		}else{
+			s=m;
+		}
+	}
+	return e;
+}
 int main(){
 	ios_base::sync_with_stdio(0);
-	string a,b;
-	cin>>a>>b;
-	if(a==b) pln(a);
-	else pln(1);
+	cin>>n>>m;
+	loop(i,0,n) cin>>a[i];
+	loop(i,0,n) cin>>b[i];
+	double res = findRes();
+	//pln(res);
+	if(check(res)) cout<<fixed<<setprecision(6)<<findRes()<<"\n";
+	else pln(-1);	
 }
