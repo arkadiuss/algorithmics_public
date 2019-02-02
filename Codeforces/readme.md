@@ -1,3 +1,3 @@
 Some contests from Codeforces.
 
-codeforces.com
+https://codeforces.com/profile/arkadius
